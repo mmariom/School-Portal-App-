@@ -94,8 +94,8 @@ public class ContactController {
 
 
     @GetMapping(value = "/closeMsg")
-    public String closeMsg(@RequestParam int id, Authentication authentication) {
-        contactService.updateMsgStatus(id,authentication.getName());
+    public String closeMsg(@RequestParam int id) {
+        contactService.updateMsgStatus(id);
         return "redirect:/displayMessages";
     }
 

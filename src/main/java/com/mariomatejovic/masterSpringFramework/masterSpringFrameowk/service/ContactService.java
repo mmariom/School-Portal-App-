@@ -10,6 +10,7 @@ import com.mariomatejovic.masterSpringFramework.masterSpringFrameowk.repository.
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -34,10 +35,11 @@ private ContactRepository contactRepository;
 
         boolean isSaved = false;
         contact.setStatus("OPEN");
-        contact.setCreatedBy("ANONYMOUS");
-        contact.setCreatedAt(LocalDateTime.now());
-        int result = contactRepository.saveContactMsg(contact);
-        if (result>0){
+        // Handed to auditawareimpl
+//        contact.setCreatedBy("ANONYMOUS");
+//        contact.setCreatedAt(LocalDateTime.now());
+        Contact savedContact = contactRepository.save(contact);
+        if (null != savedContact && savedContact.getContactID() > 0){
             isSaved = true;
         }
         return isSaved;
@@ -45,13 +47,26 @@ private ContactRepository contactRepository;
 
     public List<Contact> findMsgsWithOpenStatus() {
 
-        return  contactRepository.findMsgsWithOpenStatus("OPEN");
+        return  contactRepository.findByStatus("OPEN");
     }
 
-    public boolean updateMsgStatus(int contactId, String updatedBy){
+
+
+    public boolean updateMsgStatus(int contactId){
         boolean isUpdated = false;
-        int result = contactRepository.updateMsgStatus(contactId,"CLOSE", updatedBy);
-        if(result>0) {
+        Optional<Contact> byId = contactRepository.findById(contactId);
+        byId.ifPresent(
+                contact -> {
+                    contact.setStatus("CLOSE");
+//                    contact.setUpdatedBy(updatedBy);
+//                    contact.setUpdatedAt(LocalDateTime.now());
+
+                }
+        );
+
+        Contact updatedContact = contactRepository.save(byId.get());
+
+        if(null != updatedContact && updatedContact.getUpdatedBy() != null) {
             isUpdated = true;
         }
         return isUpdated;

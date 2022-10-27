@@ -2,13 +2,17 @@ package com.mariomatejovic.masterSpringFramework.masterSpringFrameowk.model;
 
 
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Data
+@Entity
+@Table(name = "contact_msg")
 public class Contact  extends  BaseEntity{
     /*
     * @NotNull: Checks if a given field is not null but allows empty values & zero elements inside collections.
@@ -16,6 +20,10 @@ public class Contact  extends  BaseEntity{
       @NotBlank: Checks if a given field is not null and trimmed length is greater than zero.
     * */
 
+    @Id
+    @Column(name = "contact_id")
+    @GeneratedValue(strategy = GenerationType.AUTO,generator = "native")
+    @GenericGenerator(name = "native",strategy = "native")
     private int contactID;
 
     @NotBlank(message="Name must not be blank")
